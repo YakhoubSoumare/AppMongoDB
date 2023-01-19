@@ -6,32 +6,39 @@ namespace AppMongoDB;
 internal class ContractorDAO : IContractorDAO
 {
     IMongoCollection<ContractorModel> collection;
-    public ContractorDAO(string server, string database)
+    public ContractorDAO(string dbClient, string mongoDatabase)
     {
-
+        var client = new MongoClient(dbClient);
+        var database = client.GetDatabase(mongoDatabase);
+        this.collection = database.GetCollection<ContractorModel>("Contractors");
     }
-    public void CreateOne<T>(T document)
+    public void CreateOne(ContractorModel document)
     {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteOne<T>(ObjectId id)
-    {
-        throw new NotImplementedException();
+        this.collection.InsertOne(document);
     }
 
-    public List<T> ReadAll<T>()
+    public void DeleteSingle(ObjectId id)
     {
-        throw new NotImplementedException();
+        var filter = Builders<ContractorModel>.Filter.Eq("Id", id);
+        collection.DeleteOne(filter);
     }
 
-    public T ReadOne<T>(ObjectId id)
+    public List<ContractorModel> ReadAll()
     {
-        throw new NotImplementedException();
+        return this.collection.Find(new BsonDocument()).ToList();
     }
 
-    public void UpdateOne<T>(T document)
+    public ContractorModel ReadOne(ObjectId id)
     {
-        throw new NotImplementedException();
+        var filter = Builders < ContractorModel >.Filter.Eq("Id", id);
+        return this.collection.Find(filter).FirstOrDefault();
+    }
+
+    public void UpdateSingle(ObjectId id, int age)
+    {
+        var filter = Builders<ContractorModel>.Filter.Eq("Id", id);
+        var update = Builders<ContractorModel>.Update.Set("age", age);
+        
+        this.collection.UpdateOne(filter, update);
     }
 }

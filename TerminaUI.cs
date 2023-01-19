@@ -1,6 +1,6 @@
 ﻿namespace AppMongoDB;
 
-internal class TerminalUI : IUI
+internal class TerminaUI : IUI
 {
     public void Clear()
     {
