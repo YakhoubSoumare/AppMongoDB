@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using System.Reflection.Metadata;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace AppMongoDB;
 
@@ -17,27 +18,60 @@ internal class CatalogueController
 	{
 		presentation.Print("Wellcome to your independant-contractor book!");
         presentation.Print(huvudMeny());
-
-        //remove();
-        //alter();
-        //listAll();
+		choices();
     }
 
     void add() {
-        var product = new ContractorModel
-        {
-            Name = "Inserted Person",
-            Age = 200,
-            Description = "Inserted through CRUD",
-            licences = new LicenceModel { Title = "Business Manager", Level = "Mid-Level" } 
-        };
-        integration.CreateOne(product);
+		try
+		{
+            presentation.Print("Enter name:");
+            string name = presentation.GetInput();
+            presentation.Print("Enter age:");
+            int age = Int32.Parse(presentation.GetInput());
+            presentation.Print("Enter Description:");
+            string description = presentation.GetInput();
+            presentation.Print("Enter title:");
+            string title = presentation.GetInput();
+            presentation.Print("Enter experience level:");
+            string level = presentation.GetInput();
+
+            var product = new ContractorModel
+            {
+                Name = name,
+                Age = age,
+                Description = description,
+                licences = new LicenceModel { Title = title, Level = level }
+            };
+            integration.CreateOne(product);
+        }
+		catch(Exception ex)
+		{
+			presentation.Print(ex.ToString());
+		}
     }
 
-	string listOne()
+	void listOne()
 	{
-		string jsonString = MongoDB.Bson.BsonExtensionMethods.ToJson<ContractorModel>(integration.ReadOne(new ObjectId("63c888b6a6acec564963486d")));
-		return jsonString;
+		string output = string.Empty;
+		presentation.Print("Enter Id: ");
+		try
+		{
+            var result = integration.ReadOne(new ObjectId(presentation.GetInput()));
+            if (result.licences != null)
+            {
+                output = "\n" + result.Name + "\n" + result.Age.ToString() + "\n" + result.Description + "\n" + result.licences.Title + ": " + result.licences.Level+ "\n\n";
+            }
+            else
+            {
+                output = "\n" + result.Name + "\n" + result.Age.ToString() + "\n" + result.Description + "\n\n";
+            }
+        }
+		catch (Exception ex) 
+		{
+			presentation.Print(ex.Message);
+		}
+
+		presentation.Print(output);
     }
 
 	void listAll()
@@ -61,12 +95,39 @@ internal class CatalogueController
 
 	void alter()
 	{
-		integration.UpdateSingle(new ObjectId("63c9147ae5407e84de72e0c4"), 50);
+        presentation.Print("Enter Id:");
+        string Id = presentation.GetInput();
+        presentation.Print("Enter property you wish to change:");
+		string property = presentation.GetInput();
+        
+        if (property != null && property.Equals("age")) 
+		{
+            presentation.Print("Change to:");
+            string alterValue = presentation.GetInput();
+
+            integration.UpdateSingle(new ObjectId(Id), property, Int32.Parse(alterValue));
+        }
+		else if (property != null && property.Equals("licence"))
+		{
+            presentation.Print("Change title to:");
+			string title = presentation.GetInput();
+            presentation.Print("Change experience level to:");
+            string level = presentation.GetInput();
+
+            integration.UpdateSingle(new ObjectId(Id), property, new LicenceModel { Title=title, Level=level});
+        }
+		else if(property != null)
+		{
+            presentation.Print("Change to:");
+            string alterValue = presentation.GetInput();
+            integration.UpdateSingle(new ObjectId(Id), property, alterValue);
+        }
 	}
 
 	void remove()
 	{
-        integration.DeleteSingle(new ObjectId("63c915cd6c1cdcfca33842f5")); 
+		presentation.Print("Enter Id:");
+        integration.DeleteSingle(new ObjectId(presentation.GetInput())); 
     }
 
 	string huvudMeny()
@@ -75,8 +136,32 @@ internal class CatalogueController
 						"\n2. List all contractors" +
 						"\n3. List a specific contractor" +
 						"\n4. Update a specific contractor" +
-                        "\n5. Delete a specific contractor"
+                        "\n5. Delete a specific contractor" +
+                        "\n6. Exit"
                         );
 		return meny;
     }
+
+	void choices()
+	{
+		int choice;
+		if(Int32.TryParse(presentation.GetInput(), out choice))
+		{
+			switch(choice)
+			{
+				case 1:
+					add(); Start(); break;
+				case 2:
+					listAll(); Start();  break;
+				case 3:
+					listOne(); Start(); break;
+				case 4:
+					alter(); Start(); break;
+				case 5:
+					remove(); Start(); break;
+				case 6:
+					presentation.Exit(); break;
+			}
+		}
+	}
 }

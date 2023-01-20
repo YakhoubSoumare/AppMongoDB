@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Reflection.Metadata;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace AppMongoDB;
@@ -30,14 +31,14 @@ internal class ContractorDAO : IContractorDAO
 
     public ContractorModel ReadOne(ObjectId id)
     {
-        var filter = Builders < ContractorModel >.Filter.Eq("Id", id);
-        return this.collection.Find(filter).FirstOrDefault();
+        var filter = Builders<ContractorModel>.Filter.Eq("Id", id);
+        return this.collection.Find(filter).SingleOrDefault();
     }
 
-    public void UpdateSingle(ObjectId id, int age)
+    public void UpdateSingle<T>(ObjectId id, string property, T value)
     {
         var filter = Builders<ContractorModel>.Filter.Eq("Id", id);
-        var update = Builders<ContractorModel>.Update.Set("age", age);
+        var update = Builders<ContractorModel>.Update.Set(property, value);
         
         this.collection.UpdateOne(filter, update);
     }
