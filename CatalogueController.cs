@@ -95,39 +95,47 @@ internal class CatalogueController
 
 	void alter()
 	{
-        presentation.Print("Enter Id:");
-        string Id = presentation.GetInput();
-        presentation.Print("Enter property you wish to change:");
-		string property = presentation.GetInput();
-        
-        if (property != null && property.Equals("age")) 
+		try
 		{
-            presentation.Print("Change to:");
-            string alterValue = presentation.GetInput();
+            presentation.Print("Enter Id:");
+            string Id = presentation.GetInput();
+            presentation.Print("Enter property you wish to change:");
+            string property = presentation.GetInput();
 
-            integration.UpdateSingle(new ObjectId(Id), property, Int32.Parse(alterValue));
-        }
-		else if (property != null && property.Equals("licence"))
-		{
-            presentation.Print("Change title to:");
-			string title = presentation.GetInput();
-            presentation.Print("Change experience level to:");
-            string level = presentation.GetInput();
+            if (property != null && property.Equals("age"))
+            {
+                presentation.Print("Change to:");
+                string alterValue = presentation.GetInput();
 
-            integration.UpdateSingle(new ObjectId(Id), property, new LicenceModel { Title=title, Level=level});
+                integration.UpdateSingle(new ObjectId(Id), property, Int32.Parse(alterValue));
+            }
+            else if (property != null && property.Equals("licence"))
+            {
+                presentation.Print("Change title to:");
+                string title = presentation.GetInput();
+                presentation.Print("Change experience level to:");
+                string level = presentation.GetInput();
+
+                integration.UpdateSingle(new ObjectId(Id), property, new LicenceModel { Title = title, Level = level });
+            }
+            else if (property != null)
+            {
+                presentation.Print("Change to:");
+                string alterValue = presentation.GetInput();
+                integration.UpdateSingle(new ObjectId(Id), property, alterValue);
+            }
         }
-		else if(property != null)
-		{
-            presentation.Print("Change to:");
-            string alterValue = presentation.GetInput();
-            integration.UpdateSingle(new ObjectId(Id), property, alterValue);
-        }
+        catch(Exception ex) { presentation.Print(ex.Message); }
 	}
 
 	void remove()
 	{
-		presentation.Print("Enter Id:");
-        integration.DeleteSingle(new ObjectId(presentation.GetInput())); 
+		try
+		{
+            presentation.Print("Enter Id:");
+            integration.DeleteSingle(new ObjectId(presentation.GetInput()));
+        }
+		catch(Exception ex) { presentation.Print(ex.Message); }
     }
 
 	string huvudMeny()
