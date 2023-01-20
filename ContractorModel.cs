@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace AppMongoDB;
 
-//[BsonIgnoreExtraElements]
+[BsonIgnoreExtraElements]
 internal class ContractorModel
 {
     [BsonId]
@@ -18,12 +18,11 @@ internal class ContractorModel
     [BsonElement("description")]
     public string? Description { get; set; }
 
-    //[BsonElement("licenses")]
-    public LicenceModel? licences { get; set;}
+    public LicenceModel? licence { get; set;}
 
 }
 
-//[BsonIgnoreExtraElements]
+[BsonIgnoreExtraElements]
 internal class LicenceModel
 {
     [BsonElement("title")]

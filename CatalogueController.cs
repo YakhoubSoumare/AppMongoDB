@@ -40,7 +40,7 @@ internal class CatalogueController
                 Name = name,
                 Age = age,
                 Description = description,
-                licences = new LicenceModel { Title = title, Level = level }
+                licence = new LicenceModel { Title = title, Level = level }
             };
             integration.CreateOne(product);
         }
@@ -57,9 +57,9 @@ internal class CatalogueController
 		try
 		{
             var result = integration.ReadOne(new ObjectId(presentation.GetInput()));
-            if (result.licences != null)
+            if (result.licence != null)
             {
-                output = "\n" + result.Name + "\n" + result.Age.ToString() + "\n" + result.Description + "\n" + result.licences.Title + ": " + result.licences.Level+ "\n\n";
+                output = "\n" + result.Name + "\n" + result.Age.ToString() + "\n" + result.Description + "\n" + result.licence.Title + ": " + result.licence.Level+ "\n\n";
             }
             else
             {
@@ -79,9 +79,9 @@ internal class CatalogueController
 		string output = string.Empty;
 		integration.ReadAll().ForEach(item => 
 		{ 
-			if(item.licences != null) 
+			if(item.licence != null) 
 			{
-                output = item.Id + ":" + "\n" + item.Name + "\n" + item.Age.ToString() + "\n" + item.Description + "\n" + item.licences.Title+": " + item.licences.Level;               
+                output = item.Id + ":" + "\n" + item.Name + "\n" + item.Age.ToString() + "\n" + item.Description + "\n" + item.licence.Title+": " + item.licence.Level;               
 			}
 			else
 			{
@@ -107,16 +107,16 @@ internal class CatalogueController
                 presentation.Print("Change to:");
                 string alterValue = presentation.GetInput();
 
-                integration.UpdateSingle(new ObjectId(Id), property, Int32.Parse(alterValue));
+                integration.UpdateSingle(new ObjectId(Id), property , Int32.Parse(alterValue));
             }
-            else if (property != null && property.Equals("licence"))
+            else if (property != null && (property.Equals("licence")))
             {
                 presentation.Print("Change title to:");
                 string title = presentation.GetInput();
                 presentation.Print("Change experience level to:");
                 string level = presentation.GetInput();
 
-                integration.UpdateSingle(new ObjectId(Id), property, new LicenceModel { Title = title, Level = level });
+                integration.UpdateSingle(new ObjectId(Id), property , new LicenceModel { Title = title, Level = level });
             }
             else if (property != null)
             {
