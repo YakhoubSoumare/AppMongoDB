@@ -1,4 +1,4 @@
-# AppMongoDB
+# AppMongoDB - (BEFORE LEARNING CLEAN CODE)
 The program can is about a cataloque holding independent contractors.
 The MongoDB database contains a number of already entered documents.
 The application is connected to the database using a Driver while implementing methods to perform CRUD operations against the database.
